@@ -1,0 +1,57 @@
+{
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url": "./cumulus.qcow2",
+      "iso_checksum": "7993A47D42A1B91B51EDCB28D525A7E0FB959845A7953C74EA2BD4F198267DEF",
+      "iso_checksum_type": "sha256",
+      "disk_image": true,
+      "use_backing_file": true,
+      "output_directory": "image",
+      "disk_size": 5000,
+      "headless": true,
+      "accelerator": "none",
+      "format": "qcow2",
+      "ssh_username": "cumulus",
+      "ssh_password": "CumulusLinux!",
+      "ssh_timeout": "20m",
+      "vm_name": "disk.raw",
+      "net_device": "virtio-net",
+      "disk_interface": "virtio",
+      "use_default_display": true,
+      "skip_compaction": true,
+      "vnc_port_min": 5900,
+      "vnc_port_max": 5900,
+      "vnc_bind_address": "0.0.0.0",
+      "qemu_binary": "/usr/local/bin/qemu-system-x86_64",
+      "qemuargs": [
+        ["-m", "2048"],
+        ["-hda", "./cumulus.qcow2"],
+        ["-display", "none"],
+        ["-machine", "pc"],
+        ["-monitor", "tcp:0.0.0.0:4000,server,nowait"],
+        ["-serial", "telnet:0.0.0.0:5000,server,nowait"],
+        ["-device", "pci-bridge,chassis_nr=1,id=pci.1"],
+        ["-device", "virtio-net,netdev=user.0"]
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "compress",
+        "output": "output/disk.raw.tar.gz"
+      },
+      {
+        "type": "googlecompute-import",
+        "project_id": "ipspace-networklab-2ef8b744",
+        "account_file": "/Users/mierdin/Desktop/ipspace-networklab-2ef8b744-088a934c5b71.json",
+        "bucket": "ipspace-labs-customimages",
+        "image_name": "cumulus-{{timestamp}}",
+        "image_description": "cumulus",
+        "image_family": "ubuntu-1604-lts"
+      }
+    ]
+  ]
+}

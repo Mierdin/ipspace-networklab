@@ -1,0 +1,3 @@
+[submodule "local/vqfx10k-vagrant"]
+	path = local/vqfx10k-vagrant
+	url = https://github.com/Juniper/vqfx10k-vagrant
